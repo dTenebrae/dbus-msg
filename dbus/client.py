@@ -3,6 +3,11 @@
 #Python script to call the methods of the DBUS Test Server
 
 import dbus
+import subprocess
+
+def show_msg(msg):
+    subprocess.Popen(['notify-send', msg])
+    return
 
 #get the session bus
 bus = dbus.SessionBus()
@@ -13,7 +18,7 @@ the_interface = dbus.Interface(the_object, "org.my.test")
 
 #call the methods and print the results
 reply = the_interface.hello()
-print(reply)
+show_msg(reply)
 
 # reply = the_interface.string_echo("test 123")
 # print(reply)
