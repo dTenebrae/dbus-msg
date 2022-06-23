@@ -3,14 +3,27 @@
 import socket
 import time
 import argparse
+import ipaddress
+
+
+def ip_range(start, end):
+    """
+    Генерирует список ip адресов в диапазоне start-end
+    start, end могут быть int или str (в формате "x.x.x.x")
+    """
+    return [
+        ipaddress.ip_address(i).exploded
+        for i in range(int(ipaddress.ip_address(start)),
+                       int(ipaddress.ip_address(end)))
+    ]
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Server side of message broadcasting app")
 
     parser.add_argument(
-        '-s',
-        '--string',
+        '-m',
+        '--message',
         type=str,
         default="Кушать подано",
         help="Message to send over LAN"
@@ -43,6 +56,20 @@ def parse_args():
         default=9999,
         help="Port to use. Default is 9999"
     )
+    parser.add_argument(
+        '-f',
+        '--file',
+        type=str,
+        default="",
+        help="Path to file with ip addresses. Default is empty string, which leads to localhost"
+    )
+    parser.add_argument(
+        '-r',
+        '--range',
+        type=str,
+        default="",
+        help="Range of ip addresses. Example: 192.168.1.1-192.168.1.255. Default is none"
+    )
 
     return parser.parse_args()
 
@@ -58,18 +85,48 @@ def create_server():
 if __name__ == "__main__":
     args = parse_args()
 
-    # парсим аргументы запуска сервера
-    msg = (args.header + "<DEL>" + args.string).encode("UTF-8")
+    # парсим аргументы запуска сервера.
+
+    # сообщение для отправки. Вставляем делиметр для последующего разбора на запчасти на стороне клиента
+    msg = (args.header + "<DEL>" + args.message).encode("UTF-8")
+    # пауза между отправками сообщений
     t = args.time
+    # количество отправок
     n = args.number
+    # на какой порт посылаем
     port = args.port
+
+    # список адресов для рассылки сообщений
+    addr_list = []
+
+    # если есть аргумент диапазона - заполняем список
+    if args.range:
+        # TODO check what came from that argument
+        start_ip, end_ip = args.range.split("-")
+        addr_list.extend(ip_range(start_ip, end_ip))
+
+    # считаем файл с ip-шниками. Если пустая строка - то посылать будем на localhost
+    if args.file:
+        # файл с адресами идет в приоритете, соответственно даже если в диапазоне что-то было,
+        # заполняем из файла
+        addr_list = []
+        # TODO try except
+        with open(args.file, "r") as f:
+            # отрезаем символы новой строки и запихиваем в наш список)
+            # TODO check if format of ip addresses is correct
+            addr_list.extend(map(str.strip, f.readlines()))
+    else:
+        addr_list.append("localhost")
 
     # создаем сокет
     server = create_server()
 
     # кидаем в пространство наше сообщение с интервалом time
-    i = 0
-    while i <= n:
-        server.sendto(msg, ("localhost", port))
+    idx = 0
+    while idx <= n:
+        # пробегаемся по списку адресов и каждому посылаем сообщение
+        for addr in addr_list:
+            server.sendto(msg, (addr, port))
+
         time.sleep(t)
-        i += 1
+        idx += 1
