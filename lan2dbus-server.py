@@ -53,8 +53,8 @@ def parse_args():
         '-p',
         '--port',
         type=int,
-        default=9999,
-        help="Port to use. Default is 9999"
+        default=37020,
+        help="Port to use. Default is 37020"
     )
     parser.add_argument(
         '-f',
@@ -75,6 +75,8 @@ def parse_args():
 
 
 def create_server():
+    # создаем сокет (семейство адресов AF_INET, протокол UDP,
+    # так как нам не так уж важно дошло сообщение или нет)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -101,7 +103,7 @@ if __name__ == "__main__":
 
     # если есть аргумент диапазона - заполняем список
     if args.range:
-        # TODO check what came from that argument
+        # TODO check what's came from that argument
         start_ip, end_ip = args.range.split("-")
         addr_list.extend(ip_range(start_ip, end_ip))
 
@@ -115,7 +117,8 @@ if __name__ == "__main__":
             # отрезаем символы новой строки и запихиваем в наш список)
             # TODO check if format of ip addresses is correct
             addr_list.extend(map(str.strip, f.readlines()))
-    else:
+    # если наш список пустой, то есть и диапазона тоже не было
+    elif not addr_list:
         addr_list.append("localhost")
 
     # создаем сокет
@@ -125,6 +128,7 @@ if __name__ == "__main__":
     idx = 0
     while idx <= n:
         # пробегаемся по списку адресов и каждому посылаем сообщение
+        # TODO verbose
         for addr in addr_list:
             server.sendto(msg, (addr, port))
 

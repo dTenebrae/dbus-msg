@@ -2,6 +2,29 @@
 
 import socket
 import dbus
+import argparse
+import time
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Client side of message broadcasting app")
+
+    parser.add_argument(
+        '-p',
+        '--port',
+        type=int,
+        default=37020,
+        help="Port to use. Default is 37020"
+    )
+    parser.add_argument(
+        '-t',
+        '--time',
+        type=int,
+        default=10,
+        help="Time(sec) to sleep between sending another message. Default is 10"
+    )
+
+    return parser.parse_args()
 
 
 def show_msg(msg):
@@ -49,9 +72,15 @@ def create_client():
 
 
 if __name__ == "__main__":
+    args = parse_args()
+    # на какой порт посылаем
+    port = args.port
+    # пауза между получением сообщений
+    t = args.time
+
     client = create_client()
-    # TODO create argument for changing port
-    client.bind(("", 37020))
-    # TODO loop for continuous recieving messages
-    data, addr = client.recvfrom(1024)
-    show_msg(data)
+    client.bind(("", port))
+    while True:
+        data, addr = client.recvfrom(1024)
+        show_msg(data)
+        time.sleep(t)
