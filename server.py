@@ -32,5 +32,4 @@ if __name__ == "__main__":
     server = create_server()
     while True:
         server.sendto(msg, ("localhost", 37020))
-        # print("message sent", flush=True)
         time.sleep(1)
