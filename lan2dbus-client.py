@@ -19,7 +19,7 @@ def show_msg(msg):
         "icon": "/usr/share/icons/mate/32x32/status/sunny.png",
         "title": header,
         "text": body,
-        "action-list": "",
+        "actions-list": "",
         "hint": "",
         "time": 5000  # msec
     }
@@ -59,7 +59,7 @@ def create_client():
 if __name__ == "__main__":
     client = create_client()
     # TODO create argument for changing port
-    client.bind(("", 9999))
+    client.bind(("", 37020))
     # TODO loop for continuous recieving messages
     data, addr = client.recvfrom(1024)
     show_msg(data)
