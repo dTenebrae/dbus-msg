@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import socket
 import dbus
-import argparse
 import time
+import socket
+import argparse
 
 
 def parse_args():
@@ -21,16 +21,26 @@ def parse_args():
         '--time',
         type=int,
         default=10,
-        help="Time(sec) to sleep between sending another message. Default is 10"
+        help="Time(sec) to sleep between recieving another message. Default is 10"
     )
 
     return parser.parse_args()
 
 
 def show_msg(msg):
-    # TODO try except
-    msg = msg.decode("UTF-8")
+    """
+    Функция отображения сообщения через dbus
+    :param msg: сообщение в bytecode
+    :return: None
+    """
+    try:
+        msg = msg.decode("UTF-8")
+    # TODO exception is too broad
+    except Exception:
+        print("Can't decode message")
+        exit(1)
 
+    # TODO check if split is correct
     header, body = msg.split("<DEL>")
 
     dbus_attr = {
@@ -39,7 +49,7 @@ def show_msg(msg):
         "interface": "org.freedesktop.Notifications",
         "app-name": "dbus-msg",
         "id-num-to-replace": 0,
-        "icon": "/usr/share/icons/mate/32x32/status/sunny.png",
+        "icon": "/usr/share/icons/mate/32x32/status/info.png",
         "title": header,
         "text": body,
         "actions-list": "",
@@ -78,7 +88,9 @@ if __name__ == "__main__":
     # пауза между получением сообщений
     t = args.time
 
+    # создаем клиентский сокет
     client = create_client()
+    # слущаем с любого ip по указанному порту
     client.bind(("", port))
     while True:
         data, addr = client.recvfrom(1024)

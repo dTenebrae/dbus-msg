@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
-import socket
+import re
 import time
+import socket
 import argparse
 import ipaddress
-import re
 
 
 def ip_range(start, end) -> list:
     """
     Генерирует список ip адресов в диапазоне start-end
-    start, end могут быть int или str (в формате "x.x.x.x")
+    start, end (string в формате "x.x.x.x")
     """
     return [
         ipaddress.ip_address(i).exploded
@@ -22,12 +22,21 @@ def ip_range(start, end) -> list:
 def is_ipvalid(ip_addr: str) -> bool:
     """
     source - https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp
+
+    Проверяем валидность адреса
     """
     result = re.match(r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$", ip_addr)
     return True if result is not None else False
 
 
 def get_addr(addr_range, file_name) -> list:
+    """
+    Функция для создания списка ip адресов
+    :param addr_range: Выход с аргумента, ответственного за диапазон. str
+    :param file_name: Выход с аргумента, ответственного за имя файла. str
+    :return: Список адресов, если удалось что-то получить из аргументов,
+    либо с localhost'ом, если там пусто
+    """
     # Если пришли пустые строки
     if not addr_range and not file_name:
         return ["localhost"]
@@ -49,7 +58,6 @@ def get_addr(addr_range, file_name) -> list:
         # файл с адресами идет в приоритете, соответственно даже если в диапазоне что-то было,
         # заполняем из файла
         result = []
-        # TODO try except
         try:
             with open(file_name, "r") as f:
                 # отрезаем символы новой строки и запихиваем в наш список)
