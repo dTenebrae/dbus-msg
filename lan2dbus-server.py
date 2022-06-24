@@ -4,9 +4,10 @@ import socket
 import time
 import argparse
 import ipaddress
+import re
 
 
-def ip_range(start, end):
+def ip_range(start, end) -> list:
     """
     Генерирует список ip адресов в диапазоне start-end
     start, end могут быть int или str (в формате "x.x.x.x")
@@ -16,6 +17,53 @@ def ip_range(start, end):
         for i in range(int(ipaddress.ip_address(start)),
                        int(ipaddress.ip_address(end)))
     ]
+
+
+def is_ipvalid(ip_addr: str) -> bool:
+    """
+    source - https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp
+    """
+    result = re.match(r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$", ip_addr)
+    return True if result is not None else False
+
+
+def get_addr(addr_range, file_name) -> list:
+    # Если пришли пустые строки
+    if not addr_range and not file_name:
+        return ["localhost"]
+
+    # список адресов для рассылки сообщений
+    result = []
+
+    # если есть аргумент диапазона - заполняем список
+    if addr_range:
+        start_end = addr_range.split("-")
+        # если длина списка не равна двум или в каком то из элементов не ip адрес - поднимаем ошибку
+        if len(start_end) == 2 and (is_ipvalid(start_end[0]) & is_ipvalid(start_end[1])):
+            result.extend(ip_range(start_end[0], start_end[1]))
+        else:
+            raise Exception("Incorrect range passed")
+
+    # считаем файл с ip-шниками.
+    if file_name:
+        # файл с адресами идет в приоритете, соответственно даже если в диапазоне что-то было,
+        # заполняем из файла
+        result = []
+        # TODO try except
+        try:
+            with open(file_name, "r") as f:
+                # отрезаем символы новой строки и запихиваем в наш список)
+                # Каждый элемент списка проверяем на соответствие шаблону ip адреса
+                result.extend(filter(is_ipvalid, map(str.strip, f.readlines())))
+        except FileNotFoundError:
+            print("File not found")
+            exit(1)
+
+    # если наш список в итоге пустой, то рассылаем по localhost'y
+    if not result:
+        result.append("localhost")
+
+    return result
 
 
 def parse_args():
@@ -86,9 +134,6 @@ def create_server():
 
 if __name__ == "__main__":
     args = parse_args()
-
-    # парсим аргументы запуска сервера.
-
     # сообщение для отправки. Вставляем делиметр для последующего разбора на запчасти на стороне клиента
     msg = (args.header + "<DEL>" + args.message).encode("UTF-8")
     # пауза между отправками сообщений
@@ -97,30 +142,8 @@ if __name__ == "__main__":
     n = args.number
     # на какой порт посылаем
     port = args.port
-
-    # список адресов для рассылки сообщений
-    addr_list = []
-
-    # если есть аргумент диапазона - заполняем список
-    if args.range:
-        # TODO check what's came from that argument
-        start_ip, end_ip = args.range.split("-")
-        addr_list.extend(ip_range(start_ip, end_ip))
-
-    # считаем файл с ip-шниками. Если пустая строка - то посылать будем на localhost
-    if args.file:
-        # файл с адресами идет в приоритете, соответственно даже если в диапазоне что-то было,
-        # заполняем из файла
-        addr_list = []
-        # TODO try except
-        with open(args.file, "r") as f:
-            # отрезаем символы новой строки и запихиваем в наш список)
-            # TODO check if format of ip addresses is correct
-            addr_list.extend(map(str.strip, f.readlines()))
-    # если наш список пустой, то есть и диапазона тоже не было
-    elif not addr_list:
-        addr_list.append("localhost")
-
+    # создадим список адресов для рассылки
+    addr_list = get_addr(args.range, args.file)
     # создаем сокет
     server = create_server()
 
