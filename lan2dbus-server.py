@@ -47,8 +47,12 @@ def get_addr(addr_range, file_name) -> list:
     # если есть аргумент диапазона - заполняем список
     if addr_range:
         start_end = addr_range.split("-")
+        # Если длина списка - один, то есть передан один элемент диапазона, и он
+        # валидный - добавляем его а результирующий список
+        if len(start_end) == 1 and is_ipvalid(start_end[0]):
+            result.extend(start_end)
         # если длина списка не равна двум или в каком то из элементов не ip адрес - поднимаем ошибку
-        if len(start_end) == 2 and (is_ipvalid(start_end[0]) & is_ipvalid(start_end[1])):
+        elif len(start_end) == 2 and (is_ipvalid(start_end[0]) & is_ipvalid(start_end[1])):
             result.extend(ip_range(start_end[0], start_end[1]))
         else:
             raise Exception("Incorrect range passed")

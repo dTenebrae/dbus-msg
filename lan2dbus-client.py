@@ -93,6 +93,7 @@ if __name__ == "__main__":
     # слущаем с любого ip по указанному порту
     client.bind(("", port))
     while True:
+        # TODO clear the data, so it wouldn't popup when server is off
         data, addr = client.recvfrom(1024)
         show_msg(data)
         time.sleep(t)
