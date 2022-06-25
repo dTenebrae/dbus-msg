@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for lan2dbus app to recive another message
+
+[Timer]
+OnUnitInactiveSec=10s
+OnBootSec=10s
+Unit=l2dbclient.service
+
+[Install]
+WantedBy=timers.target

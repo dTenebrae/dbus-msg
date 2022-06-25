@@ -1,0 +1,6 @@
+[Unit]
+Description=Client side of an app, reciewing message once in some time
+
+[Service]
+ExecStart=/usr/bin/lan2dbus-client
+Restart=always
