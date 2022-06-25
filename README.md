@@ -30,6 +30,7 @@
 ```
 # Устанавливаем необходимые инструменты
 $ sudo dnf install rpm-build rpm-devel rpmdevtools
+$ pip3 install --user pyinstaller
 
 # Создаем сборочные директории
 $ rpmdev-setuptree
