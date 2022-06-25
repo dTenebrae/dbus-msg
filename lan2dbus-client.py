@@ -16,13 +16,13 @@ def parse_args():
         default=37020,
         help="Port to use. Default is 37020"
     )
-    parser.add_argument(
-        '-t',
-        '--time',
-        type=int,
-        default=10,
-        help="Time(sec) to sleep between recieving another message. Default is 10"
-    )
+    # parser.add_argument(
+    #     '-t',
+    #     '--time',
+    #     type=int,
+    #     default=10,
+    #     help="Time(sec) to sleep between recieving another message. Default is 10"
+    # )
 
     return parser.parse_args()
 
@@ -85,15 +85,12 @@ if __name__ == "__main__":
     args = parse_args()
     # на какой порт посылаем
     port = args.port
-    # пауза между получением сообщений
-    t = args.time
+    # # пауза между получением сообщений
+    # t = args.time
 
     # создаем клиентский сокет
     client = create_client()
     # слущаем с любого ip по указанному порту
     client.bind(("", port))
-    while True:
-        # TODO clear the data, so it wouldn't popup when server is off
-        data, addr = client.recvfrom(1024)
-        show_msg(data)
-        time.sleep(t)
+    data, addr = client.recvfrom(1024)
+    show_msg(data)
