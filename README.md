@@ -56,19 +56,17 @@ $ sudo dnf install -y lan2dbus-client-0.1-1.el7.aarch64.rpm
 
 # Если требуется, стартуем службу. Она будет опрашивать порт каждые 10 секунд
 $ sudo systemctl start l2dbclient.timer
-
 ```
 
 __Server__
 
 ```
 sudo dnf install -y lan2dbus-server-0.1-1.el7.aarch64.rpm
-
 ```
 
 #### Использование
 
-__lan2dbus-server__ 
+__lan2dbus-server__
 
 ```
 usage: lan2dbus-server [-h] [-m MESSAGE] [-H HEADER] [-t TIME] [-n NUMBER] [-p PORT] [-f FILE] [-r RANGE]
@@ -90,7 +88,7 @@ optional arguments:
                         Range of ip addresses. Example: 192.168.1.1-192.168.1.255. Default is none
 ```
 
-__lan2dbus-client__ 
+__lan2dbus-client__
 
 ```
 usage: lan2dbus-client [-h] [-p PORT]
@@ -119,5 +117,5 @@ $ sudo dnf remove -y lan2dbus-server-0.1-1.el7.aarch64.rpm
 
 Для запуска вручную, либо если в процессе установки не загрузились зависимости
 
-* pip3 install dbus-python 
+* pip3 install dbus-python
 * sudo dnf install -y python3-devel dbus-devel glib2-devel
