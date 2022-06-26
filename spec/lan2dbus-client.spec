@@ -6,10 +6,10 @@ Summary:        Simple broadcasting app written in Python
 License:        GPL
 URL:            https://github.com/dtenebrae/dbus-msg
 
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-BuildRequires:  dbus-devel
-BuildRequires:  glib2-devel
+Requires:       python3-devel
+Requires:       python3-setuptools
+Requires:       dbus-devel
+Requires:       glib2-devel
 Requires:       systemd
 
 %description

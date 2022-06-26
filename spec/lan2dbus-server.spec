@@ -6,8 +6,8 @@ Summary:        Simple broadcasting app written in Python
 License:        GPL
 URL:            https://github.com/dtenebrae/dbus-msg
 
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+Requires:       python3-devel
+Requires:       python3-setuptools
 
 %description
 lan2dbus is a small messaging app written in Python 3, using dbus for showing message as popup window.

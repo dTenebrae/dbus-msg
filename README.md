@@ -57,6 +57,9 @@ $ sudo dnf install -y lan2dbus-client-0.1-1.el7.aarch64.rpm
 
 # Если требуется, стартуем службу. Она будет опрашивать порт каждые 10 секунд
 $ sudo systemctl start l2dbclient.timer
+
+# Разрешаем выводить на DISPLAY
+$ xhost +
 ```
 
 __Server__
