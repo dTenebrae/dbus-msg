@@ -22,13 +22,13 @@ pyinstaller --onefile %{_sourcedir}/lan2dbus-client.py
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_unitdir}
 install -m 755 dist/lan2dbus-client %{buildroot}%{_bindir}/lan2dbus-client
-install -m 755 %{_sourcedir}/l2dbclient.service %{buildroot}%{_unitdir}/l2dbclient.service
-install -m 755 %{_sourcedir}/l2dbclient.timer %{buildroot}%{_unitdir}/l2dbclient.timer
+install -m 755 %{_sourcedir}/lan2dbus-client.service %{buildroot}%{_unitdir}/lan2dbus-client.service
+install -m 755 %{_sourcedir}/lan2dbus-client.timer %{buildroot}%{_unitdir}/lan2dbus-client.timer
 
 %files
 %{_bindir}/lan2dbus-client
-%{_unitdir}/l2dbclient.service
-%{_unitdir}/l2dbclient.timer
+%{_unitdir}/lan2dbus-client.service
+%{_unitdir}/lan2dbus-client.timer
 
 %changelog
 * Sat Jun 25 2022 Artem Chernyshev <dtenebrae@gmail.com> - 0.1-1
