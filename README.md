@@ -17,8 +17,8 @@
 │   ├── lan2dbus-client.spec
 │   └── lan2dbus-server.spec
 └── src
-    ├── l2dbclient.service
-    ├── l2dbclient.timer
+    ├── lan2dbus-client.service
+    ├── lan2dbus-client.timer
     ├── lan2dbus-client.py
     └── lan2dbus-server.py
 ```
@@ -56,7 +56,7 @@ __Client__
 $ sudo dnf install -y lan2dbus-client-0.1-1.el7.aarch64.rpm
 
 # Если требуется, стартуем службу. Она будет опрашивать порт каждые 10 секунд
-$ sudo systemctl start l2dbclient.timer
+$ sudo systemctl start lan2dbus-client.timer
 
 # Разрешаем выводить на DISPLAY
 $ xhost +
